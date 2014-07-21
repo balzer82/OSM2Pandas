@@ -28,3 +28,11 @@ and then to this:
 ### Video Tutorial
 
 [https://vimeo.com/101220572](https://vimeo.com/101220572)
+
+## Beispiele
+
+### Kreuzungen in OSM finden
+
+Annahme: Eine Kreuzung ist dadurch definiert, dass es einen `Node` gibt, der mindestens zu 2 verschiedenen `highways` gehört.
+
+[IPython Notebook]()
