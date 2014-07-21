@@ -3,7 +3,7 @@
 
 # <headingcell level=1>
 
-# Read Overpass-API Call to Python Pandas Dataframe
+# Read Overpass-API to Python Pandas Dataframe
 
 # <markdowncell>
 
@@ -17,15 +17,22 @@ import requests
 import json
 pd.set_option('display.max_columns', 200)
 
+# <markdowncell>
+
+# Gebiet festlegen, am besten mit einer [Bounding Box](http://boundingbox.klokantech.com/)
+
 # <codecell>
 
+# Get yours at: http://boundingbox.klokantech.com/
+bbox = [13.526452,50.932114,13.966063,51.17772]
+
 # Links unten
-minLat = 50.9549
-minLon = 13.55232
+minLat = bbox[1]
+minLon = bbox[0]
 
 # Rechts oben
-maxLat = 51.1390
-maxLon = 13.89873
+maxLat = bbox[3]
+maxLon = bbox[2]
 
 # <markdowncell>
 
@@ -86,14 +93,73 @@ osmdf.head(5)
 
 # <codecell>
 
-busstopsdf = osmdf[['lat', 'lon', 'name', 'wheelchair']]
+busstopsdf = osmdf[['lat', 'lon', 'name', 'wheelchair']].dropna(subset=['name']).fillna(u'unknown')
+busstopsdf.head(5)
+
+# <codecell>
+
+accesslevel = {'unknown': 0, 'yes': 2, 'limited': 1, 'no': -1}
+def getacclev(c):
+    return accesslevel[c]
+busstopsdf['accesslevel'] = busstopsdf.wheelchair.apply(getacclev)
+
+# <codecell>
+
 busstopsdf.head(10)
 
 # <codecell>
 
-busstopsdf.to_csv('bus_stops.csv', sep=',', encoding='utf-8', index=False)
+busstopsdf[['lat','lon','name','accesslevel','wheelchair']].to_csv('bus_stops.csv', sep=',', encoding='utf-8', index=False)
 
 # <codecell>
 
 print('Done.')
+
+# <headingcell level=3>
+
+# Get Accessability Level for Disabled People
+
+# <codecell>
+
+busstopsdf.wheelchair.unique()
+
+# <codecell>
+
+colorcodes = {'unknown': '#FFFFFF', 'yes': '#00FF00', 'limited': '#FFFF00', 'no': '#FF0000'}
+def colorencode(c):
+    return colorcodes[c]
+busstopsdf['color'] = busstopsdf.wheelchair.apply(colorencode)
+
+# <headingcell level=2>
+
+# Generate .html out of it
+
+# <codecell>
+
+from bokeh.plotting import *
+output_notebook()
+
+# <codecell>
+
+output_file("bus_stops.html", title="Bus Stops from openstreetmaps.org")
+
+hold()
+
+circle(busstopsdf['lon'], busstopsdf['lat'],
+       color=busstopsdf['color'], line_color='black',fill_alpha=0.8,
+       size=12, title='Bus Stops in Dresden (from openstreetmaps.org)',
+       background_fill= '#cccccc', tools='pan, wheel_zoom, box_zoom, reset')
+
+text(busstopsdf['lon'], busstopsdf['lat']+0.00002,
+    text=busstopsdf['name'], angle=0, text_color='#333333',
+    text_align="center", text_font_size="10pt")
+
+xaxis().axis_label='Lon'
+yaxis().axis_label='Lat'
+grid().grid_line_color='white'
+
+show()
+
+# <codecell>
+
 
