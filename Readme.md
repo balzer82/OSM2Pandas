@@ -36,3 +36,5 @@ and then to this:
 Annahme: Eine Kreuzung ist dadurch definiert, dass es einen `Node` gibt, der mindestens zu 2 verschiedenen `highways` gehört.
 
 [IPython Notebook](http://nbviewer.ipython.org/github/balzer82/OSM2Pandas/blob/master/OSM2Pandas-Kreuzungen.ipynb)
+
+[Karte](http://cdb.io/1lmm93y)
