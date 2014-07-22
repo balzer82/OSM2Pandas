@@ -32,7 +32,7 @@ pd.set_option('display.max_columns', 200)
 # <codecell>
 
 # Get yours at: http://boundingbox.klokantech.com/
-bbox = [13.59237,50.980341,13.953703,51.14607]
+bbox = [13.521945,50.919085,13.976063,51.18772]
 
 # Links unten
 minLat = bbox[1]
@@ -42,29 +42,42 @@ minLon = bbox[0]
 maxLat = bbox[3]
 maxLon = bbox[2]
 
+# <headingcell level=3>
+
+# Construct the Overpass Query String
+
 # <markdowncell>
 
-# Request from [Overpass-Turbo](http://overpass-api.de/api/convert?data=%3C!--%0AThis%20has%20been%20generated%20by%20the%20overpass-turbo%20wizard.%0AThe%20original%20search%20was%3A%0A%E2%80%9CBushaltestelle%E2%80%9D%0A--%3E%0A%3Cosm-script%20output%3D%22json%22%20timeout%3D%2225%22%3E%0A%20%20%3C!--%20gather%20results%20--%3E%0A%20%20%3Cunion%3E%0A%20%20%20%20%3C!--%20query%20part%20for%3A%20%E2%80%9CBushaltestelle%E2%80%9D%20--%3E%0A%20%20%20%20%3Cquery%20type%3D%22node%22%3E%0A%20%20%20%20%20%20%3Chas-kv%20k%3D%22highway%22%20v%3D%22bus_stop%22%2F%3E%0A%20%20%20%20%20%20%3Cbbox-query%20s%3D%2250.973778188690716%22%20w%3D%2213.552322387695312%22%20n%3D%2251.12033393562918%22%20e%3D%2213.898735046386719%22%2F%3E%0A%20%20%20%20%3C%2Fquery%3E%0A%20%20%3C%2Funion%3E%0A%20%20%3C!--%20print%20results%20--%3E%0A%20%20%3Cprint%20mode%3D%22body%22%2F%3E%0A%20%20%3Crecurse%20type%3D%22down%22%2F%3E%0A%20%20%3Cprint%20mode%3D%22skeleton%22%20order%3D%22quadtile%22%2F%3E%0A%3C%2Fosm-script%3E&target=mapql)
+# Request from [Overpass-Turbo](http://overpass-turbo.eu/)
 
 # <codecell>
 
-data = 'way["highway"]' # what we are looking for!
+tags = ['primary','secondary','secondary_link','tertiary','tertiary_link','living_street','residential']
+objects = ['way'] # like way, node, relation
 
-osmrequest = {'data': '[out:json][timeout:25];(%s(%s,%s,%s,%s););out body;>;out skel qt;' % (data, minLat, minLon, maxLat, maxLon)}
+compactOverpassQLstring = '[out:json][timeout:60];('
+for tag in tags:
+    for obj in objects:
+        compactOverpassQLstring += '%s["highway"="%s"](%s,%s,%s,%s);' % (obj, tag, minLat, minLon, maxLat, maxLon)
+compactOverpassQLstring += ');out body;>;out skel qt;'    
+
+# <codecell>
+
+osmrequest = {'data': compactOverpassQLstring}
 osmurl = 'http://overpass-api.de/api/interpreter'
 
 # Ask the API
 osm = requests.get(osmurl, params=osmrequest)
+
+# <headingcell level=3>
+
+# Reformat the JSON to fit in a Pandas Dataframe
 
 # <markdowncell>
 
 # The JSON can't be directyl imported to a Pandas Dataframe:
 # 
 # Thanks to [unutbu from stackoverflow.com](http://stackoverflow.com/questions/24848416/expected-string-or-unicode-when-reading-json-with-pandas) for fiddling this out!
-
-# <headingcell level=3>
-
-# Get all highways
 
 # <codecell>
 
@@ -131,9 +144,7 @@ highwaydf.tail(5)
 
 # <codecell>
 
-majorhighways = ['primary','secondary','secondary_link','tertiary','tertiary_link','living_street','residential']
-
-highwaydf = highwaydf[highwaydf['highway'].isin(majorhighways)]
+highwaydf = highwaydf[highwaydf['highway'].isin(tags)]
 
 # <markdowncell>
 
@@ -175,8 +186,6 @@ nodesdf.tail(5)
 # <markdowncell>
 
 # Jeden Knoten durch gehen und schauen, ob er bei einer Straße genutzt wird. Wenn ja, die Straßen IDs zurück geben.
-# 
-# Dauert sehr sehr lang, wenn BoundingBox groß gewählt wurde!
 
 # <codecell>
 
@@ -187,6 +196,10 @@ def gethighwayids(nodeid):
             if nid == int(nodeid):
                 highwayids.append(highwaydf['id'][n])
     return highwayids
+
+# <markdowncell>
+
+# Dauert sehr sehr lang, wenn BoundingBox groß gewählt wurde!
 
 # <codecell>
 
