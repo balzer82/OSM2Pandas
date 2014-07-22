@@ -1,8 +1,8 @@
 # OSM2Pandas
 ## Overpass-API to Pandas Dataframe
 
-The [Overpass API](http://wiki.openstreetmap.org/wiki/Overpass_API) provides access to the data behind the Openstreetmaps Map Data.
-The [Overpass-Turbo](http://overpass-turbo.eu/) is the easyiest way to test requests and get the correct code to ask the database.
+The [Overpass API](http://wiki.openstreetmap.org/wiki/Overpass_API) provides access to the data behind the Openstreetmap Data.
+The [Overpass-Turbo](http://overpass-turbo.eu/) is the easiest way to test requests and get the correct code to ask the database.
 
 
 Go from [this](http://overpass-turbo.eu/s/4h3) to this:
@@ -36,3 +36,5 @@ and then to this:
 Annahme: Eine Kreuzung ist dadurch definiert, dass es einen `Node` gibt, der mindestens zu 2 verschiedenen `highways` gehört.
 
 [IPython Notebook](http://nbviewer.ipython.org/github/balzer82/OSM2Pandas/blob/master/OSM2Pandas-Kreuzungen.ipynb)
+
+![Kreuzungen](junctions.png)

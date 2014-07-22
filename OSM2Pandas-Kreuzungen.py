@@ -32,7 +32,7 @@ pd.set_option('display.max_columns', 200)
 # <codecell>
 
 # Get yours at: http://boundingbox.klokantech.com/
-bbox = [13.57838,50.962397,13.896025,51.125713]
+bbox = [13.59237,50.980341,13.953703,51.14607]
 
 # Links unten
 minLat = bbox[1]
@@ -194,7 +194,7 @@ nodesdf['highwayids'] = nodesdf['id'].apply(gethighwayids)
 
 # <codecell>
 
-nodesdf.tail(25)
+nodesdf.head(10)
 
 # <headingcell level=2>
 
@@ -206,20 +206,30 @@ nodesdf.tail(25)
 
 # <codecell>
 
-def idetifyjunction(highwayids):
-    #print len(highwayids)
+def identifyjunction(highwayids):
+    #print highwayids
     if len(highwayids) < 2:
         return False
+    elif len(highwayids)==2:
+        # Wenn beide Highways den gleichen Namen haben, ist es nur
+        # ein Zwischenstück und keine Kreuzung
+        name1=unicode(highwaydf[highwaydf['id']==highwayids[0]]['name'].values)
+        name2=unicode(highwaydf[highwaydf['id']==highwayids[1]]['name'].values)
+        if name1==name2:
+            #print('%s=%s' % (name1, name2))
+            return False
+        else:
+            return True
     else:
         return True
 
 # <codecell>
 
-nodesdf['junction'] = nodesdf['highwayids'].apply(idetifyjunction)
+nodesdf['junction'] = nodesdf['highwayids'].apply(identifyjunction)
 
 # <codecell>
 
-nodesdf.head(25)
+nodesdf.tail(10)
 
 # <codecell>
 
