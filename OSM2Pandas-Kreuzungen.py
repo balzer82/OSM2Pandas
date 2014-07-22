@@ -244,7 +244,3 @@ junctionsdf = nodesdf[['id','lat','lon']][nodesdf['junction']==True]
 junctionsdf.to_csv('junctions.csv', index=False)
 print('done.')
 
-# <markdowncell>
-
-# ![junctions](junctions.png)
-
