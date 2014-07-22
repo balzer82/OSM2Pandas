@@ -37,8 +37,6 @@ Annahme: Eine Kreuzung ist dadurch definiert, dass es einen `Node` gibt, der min
 
 [IPython Notebook](http://nbviewer.ipython.org/github/balzer82/OSM2Pandas/blob/master/OSM2Pandas-Kreuzungen.ipynb)
 
-<<<<<<< HEAD
+[Karte](http://cdb.io/1rmKIDB)
+
 ![Kreuzungen](junctions.png)
-=======
-[Karte](http://cdb.io/1lmm93y)
->>>>>>> FETCH_HEAD
